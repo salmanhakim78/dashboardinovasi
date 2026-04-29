@@ -16,7 +16,7 @@ const removeToken = () => sessionStorage.removeItem(TOKEN_KEY);
 // BRIDA Jatim Dashboard Application
 export default function App() {
   const [activePage, setActivePage] = useState(() => {
-    return localStorage.getItem('activePage') || 'landing';
+    return localStorage.getItem('activePage') || 'home';
   });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [darkMode, setDarkMode] = useState(() => {
@@ -57,12 +57,6 @@ export default function App() {
     };
   }, [profileMenuOpen]);
 
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      localStorage.removeItem('activePage');
-      setActivePage('landing');
-    }
-  }, []);
 
   // Save active page to localStorage
   useEffect(() => {
