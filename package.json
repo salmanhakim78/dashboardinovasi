@@ -61,6 +61,8 @@
       },
       "scripts": {
             "dev": "vite",
-            "build": "vite build"
+            "build": "vite build",
+            "vercel-build": "chmod +x node_modules/.bin/vite && vite build",
+            "preview": "vite preview"
       }
 }
