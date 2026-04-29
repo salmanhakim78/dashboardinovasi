@@ -11,7 +11,7 @@ import {
 import { SkeletonLoader } from './SkeletonLoader';
 import { ReportDashboard } from './ReportDashboard';
 
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 const AUTO_REFRESH_MS = 5 * 60 * 1000; // auto-refresh setiap 5 menit
 
 interface HomeProps {

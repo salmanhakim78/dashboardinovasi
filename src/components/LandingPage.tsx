@@ -170,7 +170,7 @@ export function LandingPage({ onEnter, darkMode, setDarkMode }: LandingPageProps
 
   /* fetch stats */
   useEffect(() => {
-    const API = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '');
+    const API = import.meta.env.VITE_API_URL.replace(/\/$/, '');
     const fetchStats = async () => {
       try {
         fetch(`${API}/api/visitor-count/increment`, { method: 'POST' }).catch(() => {});

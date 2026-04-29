@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { MapPin, TrendingUp, Award, Layers, Play, X, Loader2, AlertTriangle, Users, GitBranch, Route, CheckCircle2, Info } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const injectLeafletCSS = () => {
   if (document.getElementById('leaflet-css')) return;
   const link = document.createElement('link');
@@ -592,7 +594,7 @@ export function MapInnovation({ darkMode }: MapInnovationProps) {
     try {
       setLoading(true); setError(null);
       // REVISI: endpoint baru /points (tidak ada cluster)
-      const res = await fetch('http://127.0.0.1:8000/api/peta-inovasi/points');
+      const res = await fetch(`${API_BASE_URL}/api/peta-inovasi/points`);
       if (!res.ok) throw new Error(`Gagal mengambil data (Status: ${res.status})`);
       const json = await res.json();
       // /points mengembalikan { total, innovations }
@@ -625,7 +627,7 @@ export function MapInnovation({ darkMode }: MapInnovationProps) {
 
     try {
       // REVISI: max_distance_km=50 (dari 150)
-      const res = await fetch(`http://127.0.0.1:8000/api/peta-inovasi/recommendations/${inv.no}?top_n=5&max_distance_km=50`);
+      const res = await fetch(`${API_BASE_URL}/api/peta-inovasi/recommendations/${inv.no}?top_n=5&max_distance_km=50`);
       const data = res.ok ? await res.json() : { recommendations: [] };
       const recs: Recommendation[] = data.recommendations ?? [];
       setSelectedRecs(recs);

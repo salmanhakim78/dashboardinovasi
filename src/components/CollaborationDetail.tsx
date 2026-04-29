@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle, Users, Target, Zap, TrendingUp, AlertTriangle, FileText, Lightbulb, Loader2, AlertCircle, Info } from 'lucide-react';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 interface CollaborationDetailProps {
   darkMode: boolean;
@@ -83,8 +84,8 @@ export function CollaborationDetail({
     
     try {
       const response = await fetch(
-        `http://localhost:8000/ai-input-collaboration/simulate?inovasi_1_id=${inovasi_1_id}&inovasi_2_id=${inovasi_2_id}`
-      );
+     `${API_BASE_URL}/ai-input-collaboration/simulate?inovasi_1_id=${inovasi_1_id}&inovasi_2_id=${inovasi_2_id}`
+     );
       
       // Tangkap error HTTP (4xx, 5xx)
       if (!response.ok) {

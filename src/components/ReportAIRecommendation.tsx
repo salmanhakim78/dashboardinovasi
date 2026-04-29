@@ -3,6 +3,9 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import logo from '/images/logo-brida-jatim.png';
 
+// ✅ FIXED: Gunakan env variable
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 interface AIResult {
   judul_kolaborasi: string;
   manfaat_kolaborasi: string[];
@@ -83,7 +86,8 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
     const fetchAIData = async () => {
       if (data.hasil_ai) { setIsLoadingAI(false); return; }
       try {
-        const res = await fetch(`http://localhost:8000/ai-input-collaboration/simulate?inovasi_1_id=${data.inovasi_1.id}&inovasi_2_id=${data.inovasi_2.id}`);
+        // ✅ FIXED: Gunakan API_BASE_URL
+        const res = await fetch(`${API_BASE_URL}/ai-input-collaboration/simulate?inovasi_1_id=${data.inovasi_1.id}&inovasi_2_id=${data.inovasi_2.id}`);
         if (res.ok) setAiData((await res.json()).hasil_ai);
       } catch (e) { console.error(e); }
       finally { setIsLoadingAI(false); }
@@ -169,54 +173,28 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
           {/* PAGE 1: Header + Detail Inovasi + Deskripsi */}
           <div id="report-page-1" style={pageStyle}>
 
-            {/* Header: tanggal kiri | logo+judul tengah | skor kanan */}
+            {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '18px', paddingBottom: '16px', borderBottom: '4px solid #2563EB' }}>
-              {/* Kiri */}
               <div style={{ minWidth: '110px' }}>
                 <p style={{ fontSize: '9px', color: '#6b7280', margin: '0 0 4px 0', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', fontFamily: 'Arial, sans-serif' }}>TANGGAL DIBUAT</p>
                 <p style={{ fontSize: '12px', color: '#1f2937', margin: 0, fontWeight: '700', fontFamily: 'Arial, sans-serif', lineHeight: '1.3' }}>
                   {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
-              {/* Tengah */}
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <img src={logo} alt="Logo" style={{ height: '52px', margin: '0 auto 5px', display: 'block', objectFit: 'contain' }} />
                 <h1 style={{ fontSize: '17px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 2px 0', lineHeight: '1.2', fontFamily: 'Arial, sans-serif' }}>Rekomendasi Kolaborasi Inovasi</h1>
               </div>
-              {/* Kanan — Skor Kecocokan */}
-              <div style={{
-                minWidth: '110px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-              }}>
-                <p style={{
-                  fontSize: '9px', color: '#6b7280', margin: '0 0 4px 0',
-                  fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em',
-                  fontFamily: 'Arial, sans-serif',
-                }}>
-                  SKOR KECOCOKAN
-                </p>
-                <p style={{
-                  fontSize: '28px', fontWeight: '900', color: categoryColor,
-                  margin: 0, lineHeight: '1.1', fontFamily: 'Arial, sans-serif',
-                }}>
-                  {scorePercent}%
-                </p>
-                <p style={{
-                  fontSize: '11px', color: categoryColor,
-                  margin: '3px 0 0 0', fontWeight: '700', fontFamily: 'Arial, sans-serif',
-                }}>
-                  {category}
-                </p>
+              <div style={{ minWidth: '110px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                <p style={{ fontSize: '9px', color: '#6b7280', margin: '0 0 4px 0', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', fontFamily: 'Arial, sans-serif' }}>SKOR KECOCOKAN</p>
+                <p style={{ fontSize: '28px', fontWeight: '900', color: categoryColor, margin: 0, lineHeight: '1.1', fontFamily: 'Arial, sans-serif' }}>{scorePercent}%</p>
+                <p style={{ fontSize: '11px', color: categoryColor, margin: '3px 0 0 0', fontWeight: '700', fontFamily: 'Arial, sans-serif' }}>{category}</p>
               </div>
             </div>
 
             <div style={{ flex: 1 }}>
               <SectionTitle borderColor="#2563EB">Detail Inovasi</SectionTitle>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-
                 {/* Inovasi 1 */}
                 <div style={{ padding: '12px', backgroundColor: '#EFF6FF', borderRadius: '8px', border: '2px solid #3b82f6' }}>
                   <p style={{ fontSize: '10px', color: '#6b7280', margin: '0 0 5px 0', fontWeight: '700', letterSpacing: '0.06em' }}>INOVASI 1</p>
@@ -256,7 +234,7 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
             <div style={{ marginTop: 'auto', paddingTop: '12px' }}><Footer /></div>
           </div>
 
-          {/* PAGE 2: Judul + Tingkat + Manfaat + Alasan + Dampak + Langkah */}
+          {/* PAGE 2: Analisis Kolaborasi */}
           <div id="report-page-2" style={pageStyle}>
             <div style={{ marginBottom: '16px', paddingBottom: '12px', borderBottom: '3px solid #e5e7eb' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Analisis Kolaborasi</h2>
@@ -265,7 +243,6 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
             <div style={{ flex: 1 }}>
               {aiData && (
                 <>
-                  {/* Judul + Tingkat */}
                   <div style={{ marginBottom: '14px', backgroundColor: '#FAF5FF', padding: '12px 14px', borderRadius: '8px', border: '3px solid #9333EA' }}>
                     <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 5px 0', lineHeight: '1.4' }}>🤝 {aiData.judul_kolaborasi}</h3>
                     <p style={{ fontSize: '11px', color: '#6b7280', margin: 0, fontWeight: '600' }}>
@@ -273,7 +250,6 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
                     </p>
                   </div>
 
-                  {/* Manfaat */}
                   <div style={{ marginBottom: '14px' }}>
                     <SectionTitle borderColor="#16A34A">✓ Manfaat Kolaborasi</SectionTitle>
                     <div style={{ backgroundColor: '#F0FDF4', padding: '10px 12px', borderRadius: '8px', border: '2px solid #16A34A' }}>
@@ -283,7 +259,6 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
                     </div>
                   </div>
 
-                  {/* Alasan */}
                   <div style={{ marginBottom: '14px' }}>
                     <SectionTitle borderColor="#3B82F6">🔗 Alasan Sinergi</SectionTitle>
                     <div style={{ backgroundColor: '#EFF6FF', padding: '10px 12px', borderRadius: '8px', border: '2px solid #3B82F6' }}>
@@ -291,7 +266,6 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
                     </div>
                   </div>
 
-                  {/* Dampak */}
                   <div style={{ marginBottom: '14px' }}>
                     <SectionTitle borderColor="#F59E0B">📈 Potensi Dampak</SectionTitle>
                     <div style={{ backgroundColor: '#FFFBEB', padding: '10px 12px', borderRadius: '8px', border: '2px solid #F59E0B' }}>
@@ -303,7 +277,6 @@ export function ReportAIRecommendation({ onClose, data }: ReportAIRecommendation
                 </>
               )}
 
-              {/* Langkah */}
               <div style={{ backgroundColor: '#ECFDF5', padding: '12px 14px', borderRadius: '8px', border: '3px solid #16A34A' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 10px 0' }}>💡 Langkah Selanjutnya</h3>
                 <NumberedList color="#16A34A" items={[
