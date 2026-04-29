@@ -64,5 +64,9 @@
             "build": "vite build",
             "vercel-build": "chmod +x node_modules/.bin/vite && vite build",
             "preview": "vite preview"
-      }
+      },
+      "engines": {
+            "node": "20.x"
+       }
+      
 }
